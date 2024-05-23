@@ -38,7 +38,7 @@ jobs:
         run: |
           rustup target add wasm32-unknown-unknown
           cargo build --target wasm32-unknown-unknown --release
-          target/wasm32-unknown-unknown/release/galaxies.wasm web
+          cp target/wasm32-unknown-unknown/release/galaxies.wasm web
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
