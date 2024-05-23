@@ -1,5 +1,5 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Build WASM and deploy static content to Pages
 
 on:
   # Runs on pushes targeting the default branch
@@ -36,6 +36,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Build wasm
         run: |
+          rustup target add wasm32-unknown-unknown
           cargo build --target wasm32-unknown-unknown --release
           target/wasm32-unknown-unknown/release/galaxies.wasm web
       - name: Setup Pages
