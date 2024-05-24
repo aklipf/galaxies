@@ -106,8 +106,6 @@ impl Stage {
 impl EventHandler for Stage {
     fn update(&mut self) {
         let frame_time = 1. / 60.;
-        let size = self.pos.len();
-        println!("{size}");
         // emit new particles
         for _ in 0..NUM_PARTICLES_EMITTED_PER_FRAME {
             if self.pos.len() < MAX_PARTICLES {
