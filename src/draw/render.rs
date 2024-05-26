@@ -51,12 +51,7 @@ impl Draw {
             images: vec![],
         };
 
-        let shader = ctx
-            .new_shader(
-                shader::source(),
-                shader::meta(),
-            )
-            .unwrap();
+        let shader = ctx.new_shader(shader::source(), shader::meta()).unwrap();
 
         let pipeline = ctx.new_pipeline(
             &[
@@ -90,11 +85,11 @@ impl Draw {
             ctx,
             pipeline,
             bindings,
-            ry:0.0,
+            ry: 0.0,
         }
     }
 
-    pub fn draw(&mut self, pos: &Vec<Vec3>){
+    pub fn draw(&mut self, pos: &Vec<Vec3>) {
         assert_eq!(std::mem::size_of::<Vec3>(), 12);
 
         self.ctx.buffer_update(
@@ -113,7 +108,7 @@ impl Draw {
         );
         let view_proj = proj * view;
 
-        self.ry += 0.01;
+        //self.ry += 0.01;
         let mvp = view_proj * Mat4::from_rotation_y(self.ry);
 
         self.ctx.begin_default_pass(Default::default());

@@ -1,5 +1,5 @@
-use miniquad::*;
 use glam;
+use miniquad::*;
 
 const VERTEX: &str = r#"#version 100
 attribute vec2 vertices;
@@ -24,19 +24,21 @@ varying lowp vec2 offset;
 
 void main() {
     float dist=sqrt(offset.x*offset.x+offset.y*offset.y);
-    if(dist<0.9)
+    if(dist<1.0)
+        gl_FragColor = vec4(0.869,0.158,0.859,0.2*(1.0-dist));
+    /*if(dist<0.9)
         gl_FragColor = vec4(0.869,0.158,0.859,1.0);//0.2*(1.0-dist)
     else if(dist<1.0)
-        gl_FragColor = vec4(0.0,0.0,0.0,1.0);
+        gl_FragColor = vec4(0.0,0.0,0.0,1.0);*/
     else
         discard;
 }
 "#;
 
-pub fn source<'a>()->ShaderSource<'a>{
+pub fn source<'a>() -> ShaderSource<'a> {
     ShaderSource::Glsl {
-        vertex:VERTEX,
-        fragment:FRAGMENT,
+        vertex: VERTEX,
+        fragment: FRAGMENT,
     }
 }
 

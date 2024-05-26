@@ -1,13 +1,13 @@
-use miniquad::*;
-
 use glam::{vec3, Vec3};
+use miniquad::*;
+use rand;
+use rand_distr::{Distribution, Normal};
 
 mod draw;
 use draw::render;
 
-const MAX_PARTICLES: usize = 32 * 1024;
-const NUM_PARTICLES_EMITTED_PER_FRAME: usize = 1024;
-
+const MAX_PARTICLES: usize = 256*1024;
+const NUM_PARTICLES_EMITTED_PER_FRAME: usize = 100000;
 
 struct Stage {
     draw: render::Draw,
@@ -28,15 +28,20 @@ impl Stage {
 impl EventHandler for Stage {
     fn update(&mut self) {
         let frame_time = 1. / 60.;
+        let rng = &mut rand::thread_rng();
+        let normal = Normal::new(0.0f32, 1.0f32).unwrap();
         // emit new particles
         for _ in 0..NUM_PARTICLES_EMITTED_PER_FRAME {
             if self.pos.len() < MAX_PARTICLES {
-                self.pos.push(vec3(0., 0., 0.));
-                self.vel.push(vec3(
-                    quad_rand::gen_range(-1., 1.),
-                    quad_rand::gen_range(0., 2.),
-                    quad_rand::gen_range(-1., 1.),
-                ));
+                self.pos.push(2.0*vec3(
+                    normal.sample(rng),
+                    normal.sample(rng),
+                    normal.sample(rng)));
+                self.vel.push(0.1*vec3(
+                    normal.sample(rng),
+                    normal.sample(rng),
+                    normal.sample(rng),
+                ).normalize());
             } else {
                 break;
             }
@@ -45,14 +50,26 @@ impl EventHandler for Stage {
         //println!("particules: {size}");
 
         // update particle positions
+        /*let mut avg=Vec3::ZERO;
         for i in 0..self.pos.len() {
-            self.vel[i] -= vec3(0., frame_time, 0.);
-            self.pos[i] += self.vel[i] * frame_time;
-            /* bounce back from 'ground' */
-            if self.pos[i].y < -2.0 {
-                self.pos[i].y = -1.8;
-                self.vel[i] *= vec3(0.8, -0.8, 0.8);
-            }
+            avg += self.pos[i]/(self.pos.len() as f32);
+        }
+        for i in 0..self.pos.len() {
+            self.pos[i]-=avg;
+        }*/
+
+        for i in 0..self.pos.len() {
+            let acc = -0.01*self.pos[i]/ (self.pos[i].length().powf(3.0)+1e-6);
+            /*for j in 0..self.pos.len() {
+                if i == j {
+                    continue;
+                }
+                let dij = self.pos[i]-self.pos[j];
+                acc += -0.001* dij/ (dij.length().powf(3.0)+1e-6);
+            }*/
+            self.vel[i] += 20.0*acc*frame_time;
+            self.pos[i] += 20.0*self.vel[i] * frame_time;
+            
         }
     }
 
